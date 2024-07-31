@@ -49,12 +49,6 @@ export default {
       const city = this.cities.find(city => city.id === this.selectedCity)
       return city ? city.name : ''
     }
-  },
-  mounted() {
-    // 設置默認選中的城市
-    if (this.cities.length > 0) {
-      this.selectedCity = this.cities[0].id
-    }
   }
 }
 </script>
