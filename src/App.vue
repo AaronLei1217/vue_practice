@@ -1,26 +1,60 @@
 <template>
-  <img alt="Vue logo" src="./assets/logo.png">
-  <HelloWorld msg="Welcome to Your Vue.js App"/>
+  <div>
+    <select v-model="selectedCity">
+      <option v-for="city in cities" :key="city.id" :value="city.id">
+        {{ city.name }}
+      </option>
+    </select>
+    <table>
+      <thead>
+        <tr>
+          <th>縣市</th>
+          <th>區域</th>
+          <th>郵遞區號</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr v-for="district in selectedCityDistricts" :key="district.id">
+          <td>{{ selectedCityName }}</td>
+          <td>{{ district.name }}</td>
+          <td>{{ district.zipCode }}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
 </template>
 
 <script>
-import HelloWorld from './components/HelloWorld.vue'
+import cityData from './city.json'
 
 export default {
-  name: 'App',
-  components: {
-    HelloWorld
+  name: 'CityDistrictSelector',
+  data() {
+    return {
+      selectedCity: '',
+      cities: cityData,
+    }
+  },
+  computed: {
+    selectedCityDistricts() {
+      const city = this.cities.find(city => city.id === this.selectedCity)
+      if (city) {
+        return city.districts.sort((a, b) => a.sort - b.sort)
+      } else {
+        console.error(`City with id "${this.selectedCity}" not found`)
+        return []
+      }
+    },
+    selectedCityName() {
+      const city = this.cities.find(city => city.id === this.selectedCity)
+      return city ? city.name : ''
+    }
+  },
+  mounted() {
+    // 設置默認選中的城市
+    if (this.cities.length > 0) {
+      this.selectedCity = this.cities[0].id
+    }
   }
 }
 </script>
-
-<style>
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
-}
-</style>
