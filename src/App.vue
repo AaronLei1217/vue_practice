@@ -25,11 +25,35 @@
 </template>
 
 <script setup>
-import {ref, computed} from 'vue'
-import cityData from './city.json'
+import {ref, computed, onMounted} from 'vue'
+import axios from 'axios';
 
-const selectedCity = ref('');
-const cities = ref(cityData);
+const cities = ref([])
+const selectedCity = ref('')
+
+const fetchCityData = async () => {
+  try {
+    const response = await axios.get('https://raw.githubusercontent.com/kurotanshi/mask-map/master/raw/area-location.json')
+
+    // 給定預設值是台北 如果再宣告selectedCity就設定為台北 會抓不到 因為還沒有獲取 api 的資料
+    selectedCity.value = response.data[0].id
+    cities.value = response.data
+  } catch (err) {
+    console.error('Error fetching data:', err)
+  }
+}
+// async await 寫法 與一般promise 寫法 
+// axios 這個 library  回傳的是 promise 物件
+
+// const fetchCityData = () => {
+//   axios.get('https://raw.githubusercontent.com/kurotanshi/mask-map/master/raw/area-location.json')
+//     .then(response => {
+//       cities.value = response.data
+//     })
+//     .catch(err => {
+//       console.error('Error fetching data:', err)
+//     })
+// }
 
 const selectedCityDistricts = computed(() => {
   const city = cities.value.find(city => city.id === selectedCity.value)
@@ -45,4 +69,8 @@ const selectedCityName = computed(() => {
   const city = cities.value.find(city => city.id === selectedCity.value)
   return city ? city.name : ''
 })
+
+// 通常會把 hook 放在最後面
+onMounted(fetchCityData)
+
 </script>
