@@ -24,31 +24,25 @@
   </div>
 </template>
 
-<script>
+<script setup>
+import {ref, computed} from 'vue'
 import cityData from './city.json'
 
-export default {
-  name: 'CityDistrictSelector',
-  data() {
-    return {
-      selectedCity: '',
-      cities: cityData,
-    }
-  },
-  computed: {
-    selectedCityDistricts() {
-      const city = this.cities.find(city => city.id === this.selectedCity)
-      if (city) {
-        return city.districts.sort((a, b) => a.sort - b.sort)
-      } else {
-        console.error(`City with id "${this.selectedCity}" not found`)
-        return []
-      }
-    },
-    selectedCityName() {
-      const city = this.cities.find(city => city.id === this.selectedCity)
-      return city ? city.name : ''
-    }
+const selectedCity = ref('');
+const cities = ref(cityData);
+
+const selectedCityDistricts = computed(() => {
+  const city = cities.value.find(city => city.id === selectedCity.value)
+  if (city) {
+    return city.districts.sort((a, b) => a.sort - b.sort)
+  } else {
+    console.error(`City with id "${selectedCity.value}" not found`)
+    return []
   }
-}
+})
+
+const selectedCityName = computed(() => {
+  const city = cities.value.find(city => city.id === selectedCity.value)
+  return city ? city.name : ''
+})
 </script>
